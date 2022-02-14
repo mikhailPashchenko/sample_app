@@ -6,8 +6,8 @@
 #
 one:
   name: Mike
-  email: Test
+  email: mike@test.ru
 #
 two:
   name: Mike
-  email: Test
+  email: other@test.ru
