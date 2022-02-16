@@ -6,4 +6,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'title', full_title('Sign up')
   end
+
+  # test "should get show" do
+  #   get user
 end
