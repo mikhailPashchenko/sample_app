@@ -30,8 +30,8 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    reset_session
-    @current_user = nil
+    log_out
+    redirect_to root_path
   end
 
   private
