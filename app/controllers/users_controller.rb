@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include SessionsHelper
+
   def new
     @user = User.new
   end
@@ -6,6 +8,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      reset_session
+      log_in @user
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user
     else
@@ -16,6 +20,10 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    #if user_logged_in?(@user)
+    # => show personal page
+    #else
+    # => show public page
   end
 
   private
