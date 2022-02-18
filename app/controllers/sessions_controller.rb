@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
     end
 
     user = User.find_by(email: params[:session][:email])
-    if user && user.authenticate(params[:session][:password])
+    if user&.authenticate(params[:session][:password])
       reset_session
       log_in(user)
       flash[:success] = 'You are logged in!'
