@@ -6,6 +6,7 @@
         <%= @user.name =%>
         <%= gravatar_img_tag(@user, {size: 200}) =%>
       </h1>
+      <%= @user.email if logged_in?%>
     </section>
   </aside>
 </div>
