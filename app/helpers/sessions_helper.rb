@@ -1,6 +1,7 @@
 module SessionsHelper
   def log_in(user)
     session[:user_id] = user.id
+    cookies[:user_name] = user.name
   end
 
   def current_user
@@ -14,5 +15,6 @@ module SessionsHelper
   def log_out
     reset_session
     @current_user = nil
+    cookies.delete :user_name
   end
 end

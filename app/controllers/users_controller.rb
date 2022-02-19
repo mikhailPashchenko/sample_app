@@ -19,11 +19,10 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
-    #if user_logged_in?(@user)
-    # => show personal page
-    #else
-    # => show public page
+    @user = User.find_by(id: params[:id])
+    if @user.nil?
+      redirect_to root_path, flash: { warning: 'User not found!' }
+    end
   end
 
   private

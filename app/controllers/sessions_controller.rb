@@ -31,7 +31,7 @@ class SessionsController < ApplicationController
 
   def destroy
     log_out
-    redirect_to root_path
+    redirect_to root_path, flash: { success: "You have successfully logged out." }
   end
 
   private
