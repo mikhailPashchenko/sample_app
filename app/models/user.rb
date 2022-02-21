@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   #include ApplicationHelper
+  attr_accessor :remember_token
 
   validates :name, presence: true, length: { maximum: 50}
   validates :email,
@@ -10,10 +11,30 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 4 }
 
-  # Returns the hash digest of the given string.
-  def User.digest(string)
-    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-                                                  BCrypt::Engine.cost
-    BCrypt::Password.create(string, cost: cost)
+  class << self
+    # Returns the hash digest of the given string.
+    def digest(string)
+      cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                    BCrypt::Engine.cost
+      BCrypt::Password.create(string, cost: cost)
+    end
+
+    def new_token
+      SecureRandom.urlsafe_base64
+    end
+  end
+
+  def remember
+    self.remember_token = User.new_token
+    update_attribute(:remember_digest, User.digest(remember_token))
+  end
+
+  def forget
+    self.remember_token = nil
+    update_attribute(:remember_digest, nil)
+  end
+
+  def authenticated_with_token?(token)
+    BCrypt::Password.new(remember_digest).is_password?(token)
   end
 end
