@@ -7,14 +7,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     @password = 'password'
   end
 
-  def login_without_redirect
-    get login_path
-    post login_path, params: { session: { email: @user.email,
-                                          password: @password } }
-  end
-
   def logout_without_redirect
-    login_without_redirect
+    login_as(@user)
     follow_redirect!
     delete logout_path
   end
@@ -30,7 +24,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   end
 
   test "login with valid params" do
-    login_without_redirect
+    login_as(@user)
     assert_redirected_to @user
     follow_redirect!
     assert_template :show
@@ -60,5 +54,16 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", login_path
     assert_select "a[href=?]", logout_path, count: 0
     assert_select "a[href=?]", user_path(@user), count: 0
+  end
+
+  test "log in with remember me" do
+    login_as(@user, remember_me: '1')
+    assert_not cookies[:remember_token].blank?
+    assert_equal cookies[:remember_token], assigns(:user).remember_token
+  end
+
+  test "log in without remember" do
+    login_as(@user)
+    assert cookies[:remember_token].blank?
   end
 end
