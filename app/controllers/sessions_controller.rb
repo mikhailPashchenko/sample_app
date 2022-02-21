@@ -17,8 +17,6 @@ class SessionsController < ApplicationController
 
     user = User.find_by(email: params[:session][:email])
     if user&.authenticate(params[:session][:password])
-      reset_session
-      remember(user)
       log_in(user)
       flash[:success] = 'You are logged in!'
       return redirect_to user
@@ -31,7 +29,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    log_out
+    log_out if logged_in?
     redirect_to root_path, flash: { success: "You have successfully logged out." }
   end
 
