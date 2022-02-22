@@ -2,10 +2,11 @@ require "test_helper"
 
 class UsersEditTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:one)
+    @user = users(:mike)
   end
 
-  test "wrong edit" do
+  test "bad params edit" do
+    login_as(@user)
     get edit_user_path(@user)
     assert_template :edit
     patch user_path(@user), params: { user: { name: 'Nil', email: 'bad@email',
@@ -18,6 +19,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   end
 
   test "successful edit" do
+    login_as(@user)
     get edit_user_path(@user)
     patch user_path(@user), params: { user: { name: 'Mishel', email: 'good@email.com',
                                       password: '', password_confirmation: '' } }
@@ -28,5 +30,4 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     # when user is logged in
     # assert_select ".email", text: "good@email.com"
   end
-
 end

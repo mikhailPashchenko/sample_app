@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   include SessionsHelper
 
   before_action :find_user, except: [:new, :create]
+  before_action :logged_in, only: [:edit, :update]
+  before_action :check_authorisation, only: [:edit, :update]
 
   def new
     @user = User.new
@@ -45,5 +47,19 @@ class UsersController < ApplicationController
 
   def find_user
     @user = User.find_by(id: params[:id])
+  end
+
+  def logged_in
+    unless logged_in?
+      flash[:warning] = "Please log in to access this page"
+      redirect_to "#{login_path}?from=#{params[:action]}_user"#, params: { from: 'edit_user'}
+    end
+  end
+
+  def check_authorisation
+    if current_user != @user
+      flash[:warning] = "You don't have rights to this action"
+      redirect_to @user
+    end
   end
 end

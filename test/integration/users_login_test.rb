@@ -3,7 +3,7 @@ require "test_helper"
 class UsersLoginTest < ActionDispatch::IntegrationTest
 
   def setup
-    @user = users(:one)
+    @user = users(:jar)
     @password = 'password'
   end
 
