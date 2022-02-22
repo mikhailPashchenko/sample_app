@@ -5,7 +5,7 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     @user = users(:one)
   end
 
-  test "edit" do
+  test "wrong edit" do
     get edit_user_path(@user)
     assert_template :edit
     patch user_path(@user), params: { user: { name: 'Nil', email: 'bad@email',
@@ -16,4 +16,17 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     assert_select "li", text: "Password confirmation doesn't match Password"
     assert_select "li", text: "Password is too short (minimum is 4 characters)"
   end
+
+  test "successful edit" do
+    get edit_user_path(@user)
+    patch user_path(@user), params: { user: { name: 'Mishel', email: 'good@email.com',
+                                      password: '', password_confirmation: '' } }
+    assert_redirected_to user_path(@user)
+    follow_redirect!
+    assert_select "h1", text: "Mishel"
+    assert_select ".gravatar"
+    # when user is logged in
+    # assert_select ".email", text: "good@email.com"
+  end
+
 end
