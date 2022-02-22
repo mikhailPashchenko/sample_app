@@ -4,7 +4,8 @@ class SessionsHelperTest < ActionView::TestCase
   include SessionsHelper
 
   def setup
-    @user = users(:one)
+    @user = users(:jar)
+    @other = users(:mike)
     remember_session(@user)
   end
 
@@ -22,5 +23,13 @@ class SessionsHelperTest < ActionView::TestCase
     @user.update_attribute(:remember_digest, User.digest(User.new_token))
     assert_not current_user
     assert_not is_logged_in?
+  end
+
+  test "check current user? if other" do
+    assert_not current_user?(@other)
+  end
+
+  test "check current user? if self" do
+    assert current_user?(@user)
   end
 end
