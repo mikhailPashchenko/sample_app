@@ -39,4 +39,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_not flash.empty?
     assert_redirected_to user_path(@user)
   end
+
+  test "index should redirect when isn't log in" do
+    get users_path
+    assert_redirected_to "#{login_path}?from=index_user"
+  end
+
+  test "should get index when is log in" do
+    login_as(@user)
+    get users_path
+    assert_response :success
+    assert_template :index
+  end
 end
