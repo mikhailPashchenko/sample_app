@@ -2,8 +2,12 @@ class UsersController < ApplicationController
   include SessionsHelper
 
   before_action :find_user, except: [:new, :create]
-  before_action :logged_in, only: [:edit, :update]
+  before_action :logged_in, only: [:index, :edit, :update]
   before_action :check_authorisation, only: [:edit, :update]
+
+  def index
+    @users = User.all
+  end
 
   def new
     @user = User.new
