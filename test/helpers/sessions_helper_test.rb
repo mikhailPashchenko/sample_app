@@ -5,7 +5,6 @@ class SessionsHelperTest < ActionView::TestCase
 
   def setup
     @user = users(:jar)
-    @other = users(:mike)
     remember_session(@user)
   end
 
@@ -14,7 +13,7 @@ class SessionsHelperTest < ActionView::TestCase
     assert_not logged_in?
   end
 
-  test "current user is correct when when session was nil" do
+  test "current user is correct when session is nil" do
     assert_equal @user, current_user
     assert is_logged_in?
   end
@@ -26,6 +25,7 @@ class SessionsHelperTest < ActionView::TestCase
   end
 
   test "check current user? if other" do
+    @other = users(:mike)
     assert_not current_user?(@other)
   end
 
@@ -33,7 +33,7 @@ class SessionsHelperTest < ActionView::TestCase
     assert current_user?(@user)
   end
 
-  test "check current_user? when no users" do
+  test "nil current_user? when no users" do
     forget_session(@user)
     assert_not current_user?(nil)
   end
