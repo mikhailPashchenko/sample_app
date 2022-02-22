@@ -52,12 +52,13 @@ class UsersController < ApplicationController
   def logged_in
     unless logged_in?
       flash[:warning] = "Please log in to access this page"
+      store_location
       redirect_to "#{login_path}?from=#{params[:action]}_user"#, params: { from: 'edit_user'}
     end
   end
 
   def check_authorisation
-    if current_user != @user
+    unless current_user?(@user)
       flash[:warning] = "You don't have rights to this action"
       redirect_to @user
     end

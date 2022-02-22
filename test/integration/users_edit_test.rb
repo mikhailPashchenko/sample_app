@@ -30,4 +30,10 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     # when user is logged in
     # assert_select ".email", text: "good@email.com"
   end
+
+  test "succesfully edit after log in" do
+    get edit_user_path(@user)
+    login_as(@user)
+    assert_redirected_to edit_user_path(@user)
+  end
 end

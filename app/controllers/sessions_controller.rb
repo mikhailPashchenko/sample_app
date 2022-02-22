@@ -19,12 +19,13 @@ class SessionsController < ApplicationController
 
     @user = User.find_by(email: params[:session][:email])
     if @user&.authenticate(params[:session][:password])
+      forwarding_url = session[:forwarding_url]
       reset_session
       params[:session][:remember_me] == '1' ? remember_session(@user) :
                                               forget_session(@user)
       log_in(@user)
       flash[:success] = 'You are logged in!'
-      return redirect_to @user
+      return redirect_to forwarding_url || @user
     elsif @user.nil?
       flash.now[:danger] = 'Email not found!'
     else
