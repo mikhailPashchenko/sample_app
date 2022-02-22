@@ -32,4 +32,9 @@ class SessionsHelperTest < ActionView::TestCase
   test "check current user? if self" do
     assert current_user?(@user)
   end
+
+  test "check current_user? when no users" do
+    forget_session(@user)
+    assert_not current_user?(nil)
+  end
 end
