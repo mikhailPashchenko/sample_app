@@ -8,15 +8,18 @@ mike:
   name: Mike
   email: mike@test.ru
   password_digest: <%= User.digest('password') %>
+  role: 'admin'
 
 jar:
   name: jaroslav
   email: jar@test.ru
   password_digest: <%= User.digest('password') %>
+  role: 'client'
 
 <% 30.times do |n| %>
 user_<%= n %>:
   name:  <%= "User_#{n}" %>
   email: <%= "mail_#{n}@test.com" %>
   password_digest: <%= User.digest('password') %>
+  role: 'client'
 <% end %>

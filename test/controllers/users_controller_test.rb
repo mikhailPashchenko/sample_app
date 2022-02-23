@@ -29,7 +29,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     login_as(@other)
     get edit_user_path(@user)
     assert_not flash.empty?
-    assert_redirected_to user_path(@user)
+    assert_redirected_to user_path(@other)
   end
 
   test "wrong update when other user" do
@@ -37,7 +37,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     patch user_path(@user), params: { user: { name: 'Mishel', email: 'good@email.com',
                                       password: '', password_confirmation: '' } }
     assert_not flash.empty?
-    assert_redirected_to user_path(@user)
+    assert_redirected_to user_path(@other)
   end
 
   test "index should redirect when isn't log in" do
@@ -50,5 +50,23 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get users_path
     assert_response :success
     assert_template :index
+  end
+
+  test "admin user on index should be god" do
+    login_as(users :mike)
+    get users_path
+    assert_template :index
+    assert @user.is_god?
+  end
+
+  test "should not allow edit role attribute via web" do
+    login_as @other
+    assert_equal @other.role, 'client'
+    patch user_path(@other), params: { user: {
+      password: "password",
+      password_confirmation: "password",
+      role: 'admin'
+    }}
+    assert_equal @other.reload.role, 'client'
   end
 end

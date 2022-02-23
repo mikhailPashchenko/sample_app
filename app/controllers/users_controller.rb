@@ -4,8 +4,10 @@ class UsersController < ApplicationController
   before_action :find_user, except: [:new, :create]
   before_action :logged_in, only: [:index, :edit, :update]
   before_action :check_authorisation, only: [:edit, :update]
+  before_action :check_admin, only: [:destroy]
 
   def index
+    @user = current_user
     @users = User.paginate(page: params[:page])
   end
 
@@ -44,6 +46,16 @@ class UsersController < ApplicationController
     end
   end
 
+  def destroy
+    if @user
+      @user.destroy
+      flash[:success] = "User was deleted"
+      redirect_to users_path
+    else
+      flash.now[:danger] = "User not found"
+    end
+  end
+
   private
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
@@ -62,9 +74,16 @@ class UsersController < ApplicationController
   end
 
   def check_authorisation
-    unless current_user?(@user)
-      flash[:warning] = "You don't have rights to this action"
-      redirect_to @user
+    unless current_user?(@user) || current_user.is_god?
+      flash[:warning] = "You don't have permissions to this action"
+      redirect_to current_user
+    end
+  end
+
+  def check_admin
+    unless current_user.is_god?
+      flash[:warning] = "You don't have permissions to this action"
+      redirect_to current_user
     end
   end
 end
