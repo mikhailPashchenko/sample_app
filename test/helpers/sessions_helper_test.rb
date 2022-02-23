@@ -5,7 +5,7 @@ class SessionsHelperTest < ActionView::TestCase
 
   def setup
     @user = users(:jar)
-    @other = users(:mike)
+    @other = users(:mike_admin)
     remember_session(@user)
   end
 

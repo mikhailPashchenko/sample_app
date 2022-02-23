@@ -7,7 +7,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
   end
 
   def setup
-    @user = users(:mike)
+    @user = users(:mike_admin)
     @last_user = User.last
     login_as(@user)
     get users_path

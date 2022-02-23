@@ -2,7 +2,7 @@ require "test_helper"
 
 class UsersEditTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:mike)
+    @user = users(:mike_admin)
   end
 
   test "bad params edit" do

@@ -4,11 +4,17 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-mike:
+mike_admin:
   name: Mike
   email: mike@test.ru
   password_digest: <%= User.digest('password') %>
   role: 'admin'
+
+client:
+  name: Olga
+  email: olga@test.ru
+  password_digest: <%= User.digest('password') %>
+  role: 'client'
 
 jar:
   name: jaroslav
