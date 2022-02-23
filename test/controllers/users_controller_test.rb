@@ -2,7 +2,8 @@ require "test_helper"
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:mike)
+    @admin = users(:mike_admin)
+    @user = users(:client)
     @other = users(:jar)
   end
 
@@ -13,26 +14,26 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "edit: should redirect to login without authentification" do
-    get edit_user_path(@user)
+    get edit_user_path(@admin)
     assert_not flash.empty?
     assert_redirected_to "#{login_path}?from=edit_user"
   end
 
   test "update: should redirect to login without authentification" do
-    patch user_path(@user), params: { user: { name: 'Mishel', email: 'good@email.com',
+    patch user_path(@admin), params: { user: { name: 'Mishel', email: 'good@email.com',
                                       password: '', password_confirmation: '' } }
     assert_not flash.empty?
     assert_redirected_to "#{login_path}?from=update_user"
   end
 
-  test "wrong edit when other user" do
+  test "wrong edit when other non-admin user" do
     login_as(@other)
     get edit_user_path(@user)
     assert_not flash.empty?
     assert_redirected_to user_path(@other)
   end
 
-  test "wrong update when other user" do
+  test "wrong update when other non-admin user" do
     login_as(@other)
     patch user_path(@user), params: { user: { name: 'Mishel', email: 'good@email.com',
                                       password: '', password_confirmation: '' } }
@@ -40,7 +41,22 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to user_path(@other)
   end
 
-  test "index should redirect when isn't log in" do
+  test "admin should edit other user" do
+    login_as @admin
+    get edit_user_path(@user)
+    assert_response :success
+    assert_template :edit
+  end
+
+  test "admin should update other user" do
+    login_as @admin
+    patch user_path(@other), params: { user: { name: 'Mishel', email: 'good@email.com',
+                                      password: '', password_confirmation: '' } }
+
+    assert_equal @other.reload.name, 'Mishel'
+  end
+
+  test "index should redirect to login without authentification" do
     get users_path
     assert_redirected_to "#{login_path}?from=index_user"
   end
@@ -53,10 +69,24 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "admin user on index should be god" do
-    login_as(users :mike)
+    login_as(@admin)
     get users_path
     assert_template :index
-    assert @user.is_god?
+    assert @admin.is_god?
+  end
+
+  test "should not allow delete users for non-admin" do
+    login_as @user
+    delete user_path(@other)
+    assert_redirected_to @user
+    assert User.find_by(id: @other.id)
+  end
+
+  test "should allow delete users for admin" do
+    login_as @admin
+    delete user_path(@other)
+    assert_redirected_to users_path
+    assert_not User.find_by(id: @other.id)
   end
 
   test "should not allow edit role attribute via web" do
