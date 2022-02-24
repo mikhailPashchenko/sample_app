@@ -5,6 +5,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @admin = users(:mike_admin)
     @user = users(:client)
     @other = users(:jar)
+    @new_user = users(:new_client)
   end
 
   test "should get new" do
@@ -98,5 +99,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
       role: 'admin'
     }}
     assert_equal @other.reload.role, 'client'
+  end
+
+  test "should allow edit active attribute via web" do
+    patch activate_user_path(@new_user), params: { user: { active: true }}
+    assert @new_user.reload.active?
   end
 end
