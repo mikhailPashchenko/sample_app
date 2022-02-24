@@ -26,6 +26,12 @@ class User < ApplicationRecord
     end
   end
 
+  def set_activation_token
+    token = User.digest(User.new_token)
+    update_attribute(:activation_token, token)
+    token
+  end
+
   def remember
     self.remember_token = User.new_token
     update_attribute(:remember_digest, User.digest(remember_token))

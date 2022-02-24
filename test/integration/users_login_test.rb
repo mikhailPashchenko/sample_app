@@ -4,7 +4,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
   def setup
     @user = users(:jar)
-    @password = 'password'
+    @new_user = users(:new_client)
   end
 
   def logout_without_redirect
@@ -23,7 +23,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert flash.empty?
   end
 
-  test "login with valid params" do
+  test "active user login with valid params" do
     login_as(@user)
     assert_redirected_to @user
     follow_redirect!
@@ -32,6 +32,13 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", logout_path
     assert_select "a[href=?]", user_path(@user)
     assert is_logged_in?
+  end
+
+  test "non-active user login with valid params" do
+    login_as(@new_user)
+    assert_redirected_to @new_user
+    follow_redirect!
+    assert_select "h1", "Hello, #{@new_user.name}!"
   end
 
   test "user log out" do

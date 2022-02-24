@@ -1,12 +1,17 @@
 <% provide(:title, 'Profile') %>
-<div class='row'>
-  <aside class='col-md-4'>
-    <section class='user_info'>
-      <h1>
-        <%= @user.name =%>
-        <%= gravatar_img_tag(@user, {size: 200}) =%>
-      </h1>
-      <div class="email"><%= @user.email if logged_in?%></h1>
-    </section>
-  </aside>
-</div>
+<% if @user.active? %>
+  <div class='row'>
+    <aside class='col-md-4'>
+      <section class='user_info'>
+        <h1>
+          <%= @user.name =%>
+          <%= gravatar_img_tag(@user, {size: 200}) =%>
+        </h1>
+        <div class="email"><%= @user.email if logged_in?%></h1>
+      </section>
+    </aside>
+  </div>
+<% else %>
+  <h1>Hello, <%= @user.name %>!</h1>
+  <h2>Your account isn't activated yet. Please check <%= @user.email %> and click by our link from the letter</h2>
+<% end %>

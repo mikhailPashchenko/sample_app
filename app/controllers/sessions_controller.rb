@@ -17,7 +17,8 @@ class SessionsController < ApplicationController
       return redirect_to @current_user
     end
 
-    @user = User.find_by(email: params[:session][:email])
+    @user = User.unscoped.find_by(email: params[:session][:email])
+
     if @user&.authenticate(params[:session][:password])
       forwarding_url = session[:forwarding_url]
       reset_session
