@@ -9,18 +9,28 @@ mike_admin:
   email: mike@test.ru
   password_digest: <%= User.digest('password') %>
   role: 'admin'
+  active: true
 
 client:
   name: Olga
   email: olga@test.ru
   password_digest: <%= User.digest('password') %>
   role: 'client'
+  active: true
 
 jar:
   name: jaroslav
   email: jar@test.ru
   password_digest: <%= User.digest('password') %>
   role: 'client'
+  active: true
+
+new_client:
+  name: New
+  email: new@test.com
+  password_digest: <%= User.digest('password') %>
+  role: 'client'
+  active: false
 
 <% 30.times do |n| %>
 user_<%= n %>:

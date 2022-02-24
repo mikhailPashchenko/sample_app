@@ -12,5 +12,6 @@
   User.create!(name: name, 
                email: email,
                password: '12345',
-               password_confirmation: '12345')
+               password_confirmation: '12345',
+               active: false)
 end
