@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 4 }, allow_nil: true
 
+  default_scope { where(active: true) }
+
   class << self
     # Returns the hash digest of the given string.
     def digest(string)

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   include SessionsHelper
 
-  before_action :find_user, except: [:new, :create]
+  before_action :find_user, except: [:new, :create, :activate]
   before_action :logged_in, only: [:index, :edit, :update]
   before_action :check_authorisation, only: [:edit, :update]
   before_action :check_admin, only: [:destroy]
@@ -57,7 +57,8 @@ class UsersController < ApplicationController
   end
 
   def activate
-    redirect_to @user if @user.active?
+    @user = User.unscoped.find_by(id: params[:id])
+    return redirect_to @user if @user.active?
     @user.active = true
     if @user.save
       redirect_to @user
