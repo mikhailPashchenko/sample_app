@@ -18,7 +18,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
 
   test "valid user signup" do
     get signup_path
-    assert_difference 'User.count', 1 do
+    assert_difference 'User.unscoped.count', 1 do
       post users_path, params: {
         user: {
                 name: 'Valid User', email: 'valid@email.com',
@@ -28,7 +28,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     follow_redirect!
     assert_template :show
-    assert_not flash.empty?
     assert is_logged_in?
+    assert_select "h1", "Hello, Valid User!"
   end
 end

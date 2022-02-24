@@ -18,12 +18,12 @@ module SessionsHelper
 
   def current_user
     if session[:user_id]
-      user = User.find_by(id: session[:user_id])
+      user = User.unscoped.find_by(id: session[:user_id])
       if user&.session_token == session[:session_token]
         user
       end
     elsif (user_id = cookies.encrypted[:user_id])
-      user = User.find_by(id: user_id)
+      user = User.unscoped.find_by(id: user_id)
       if user&.authenticated_with_token?(cookies[:remember_token])
         log_in(user)
         user

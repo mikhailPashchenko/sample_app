@@ -103,12 +103,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should allow edit active attribute via web" do
     assert_not @new_user.active?
-    get "/users/#{@new_user.id}/activate"
+    @new_user.set_activation_token
+    get "/users/#{@new_user.id}/activate?token=#{@new_user.activation_token}"
     assert @new_user.reload.active?
   end
 
   test "should not activate if user active already" do
-    get "/users/#{@user.id}/activate"
+    get "/users/#{@user.id}/activate?token=#{@new_user.activation_token}"
     assert_redirected_to user_path(@user)
   end
 end

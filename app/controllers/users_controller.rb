@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
   include SessionsHelper
 
-  before_action :find_user, except: [:new, :create, :activate]
-  before_action :logged_in, only: [:index, :edit, :update]
+  before_action :find_user, except: [:new, :create]
+  before_action :logged_in, only: [:index, :edit, :update, :destroy]
+  before_action :check_activate, except: [:new, :create, :show, :activate]
   before_action :check_authorisation, only: [:edit, :update]
   before_action :check_admin, only: [:destroy]
 
@@ -17,10 +18,13 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.active = false
     if @user.save
       reset_session
-      log_in @user
+      # User::UserActivatorService.call(@user)
+      @user.set_activation_token
       remember_session @user
+      log_in @user
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user
     else
@@ -29,10 +33,12 @@ class UsersController < ApplicationController
     end
   end
 
-  def show
-    if @user.nil?
-      redirect_to root_path, flash: { warning: 'User not found!' }
-    end
+  def show  
+    return redirect_to current_user, flash: {
+      warning: "Your account isn't activated yet"
+    } if !current_user?(@user) && !current_user.active?
+
+    redirect_to root_path, flash: { warning: 'User not found!' } if @user.nil?
   end
 
   def edit
@@ -57,13 +63,21 @@ class UsersController < ApplicationController
   end
 
   def activate
-    @user = User.unscoped.find_by(id: params[:id])
-    return redirect_to @user if @user.active?
-    @user.active = true
-    if @user.save
-      redirect_to @user
+    if @user.active?
+      flash[:notice] = "Your account is active already"
+    elsif @user.activation_token != params[:token]
+      flash[:danger] = "Incorrect activation link!"
+    else
+      @user.active = true
+      if @user.save
+        flash[:success] = "Your account was activated"
+      else
+        flash[:danger] = "Error! Please connect with administrator!"
+      end
     end
+    redirect_to @user
   end
+
 
   private
   def user_params
@@ -73,7 +87,13 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    @user = User.find_by(id: params[:id])
+    @user = User.unscoped.find_by(id: params[:id])
+  end
+
+  def check_activate
+    redirect_to current_user, flash: {
+      warning: "Your account isn't activated yet"
+    } unless current_user&.active?
   end
 
   def logged_in
