@@ -56,6 +56,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def activate
+    redirect_to @user if @user.active?
+    @user.active = true
+    if @user.save
+      redirect_to @user
+    end
+  end
+
   private
   def user_params
     params.require(:user).permit(
