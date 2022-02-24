@@ -101,9 +101,18 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal @other.reload.role, 'client'
   end
 
-  test "should allow edit active attribute via web" do
+  test "should not allow edit active attribute via web" do
+    login_as @admin
     assert_not @new_user.active?
-    @new_user.set_activation_token
+    patch(
+      user_path(@other),
+      params: { user: { active: true } }
+    )
+    assert_not @new_user.reload.active?
+  end
+
+  test "should activate account by link" do
+    assert_not @new_user.active?
     get "/users/#{@new_user.id}/activate?token=#{@new_user.activation_token}"
     assert @new_user.reload.active?
   end

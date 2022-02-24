@@ -71,6 +71,7 @@ class UsersController < ApplicationController
       @user.active = true
       if @user.save
         flash[:success] = "Your account was activated"
+        @user.update_attribute(:activation_token, nil)
       else
         flash[:danger] = "Error! Please connect with administrator!"
       end
@@ -82,7 +83,7 @@ class UsersController < ApplicationController
   private
   def user_params
     params.require(:user).permit(
-      :name, :email, :password, :password_confirmation, :active
+      :name, :email, :password, :password_confirmation
     )
   end
 
