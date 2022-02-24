@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get '/signup', to: 'users#new'
   get '/personal', to: 'users#show'
   resources :users
-  patch '/users/:id/activate', to: 'users#activate'
+  get '/users/:id/activate', to: 'users#activate'
 
   get '/login', to: 'sessions#new'
   post '/login', to: 'sessions#create'

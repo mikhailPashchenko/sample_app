@@ -103,12 +103,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should allow edit active attribute via web" do
     assert_not @new_user.active?
-    patch "/users/#{@new_user.id}/activate", params: { user: { active: true }}
+    get "/users/#{@new_user.id}/activate"
     assert @new_user.reload.active?
   end
 
   test "should not activate if user active already" do
-    patch "/users/#{@user.id}/activate", params: { user: { active: true }}
+    get "/users/#{@user.id}/activate"
     assert_redirected_to user_path(@user)
   end
 end
