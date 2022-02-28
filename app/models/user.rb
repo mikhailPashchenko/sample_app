@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  #include ApplicationHelper
+
+  before_create :set_activation_token
   attr_accessor :remember_token
 
   validates :name, presence: true, length: { maximum: 50}
@@ -26,12 +27,6 @@ class User < ApplicationRecord
     end
   end
 
-  def set_activation_token
-    token = User.digest(User.new_token)
-    update_attribute(:activation_token, token)
-    token
-  end
-
   def remember
     self.remember_token = User.new_token
     update_attribute(:remember_digest, User.digest(remember_token))
@@ -54,5 +49,11 @@ class User < ApplicationRecord
 
   def is_god?
     role == 'admin'
+  end
+
+  private
+  def set_activation_token
+    token = User.digest(User.new_token)
+    self.activation_token = token
   end
 end

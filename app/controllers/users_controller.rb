@@ -22,7 +22,6 @@ class UsersController < ApplicationController
     if @user.save
       reset_session
       # User::UserActivatorService.call(@user)
-      @user.set_activation_token
       remember_session @user
       log_in @user
       flash[:success] = "Welcome to the Sample App!"
@@ -65,7 +64,7 @@ class UsersController < ApplicationController
   def activate
     if @user.active?
       flash[:notice] = "Your account is active already"
-    elsif @user.activation_token != params[:token]
+    elsif params[:token] && @user.activation_token != params[:token]
       flash[:danger] = "Incorrect activation link!"
     else
       @user.active = true

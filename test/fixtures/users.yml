@@ -31,6 +31,7 @@ new_client:
   password_digest: <%= User.digest('password') %>
   role: 'client'
   active: false
+  activation_token: <%= User.digest('activation') %>
 
 <% 30.times do |n| %>
 user_<%= n %>:
